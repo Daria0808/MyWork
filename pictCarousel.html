@@ -1,0 +1,145 @@
+<html>
+<head>
+<title>Картинки</title>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf8">
+	<script type="text/javascript" language='javascript' src='jquery.js'></script>
+			<script language='javascript' type="text/javascript">
+
+			$(document).ready(function(){
+
+			$('.next').click(function(){
+
+
+				$('img[alt="8"]').attr('alt', 9).css('z-index', 9); 
+
+  		      $('img[alt="9"]').animate({
+		              left: "+=500",}, 1500);
+  		      $('img[alt="9"]').animate({opacity:"hide"}, 1000, function(){$(this).css('z-index',0)});
+
+ 				$('img[alt="9"]').animate({opacity:"show"}, 1000);
+					$('img[alt="9"]').animate({ left: "-=500"}, 1500);
+
+
+				var countPict=7;
+				var i=1;
+				$('img[alt="7"]').attr('alt', 8).css('z-index', 8);
+
+				while (i>0)
+				{	
+
+					var i=countPict--;
+					$('img[alt="' + countPict +'"]').attr('alt', i).css('z-index', i);
+						countPict-2;
+
+				};
+
+					$('img[alt="9"]').attr('alt', 1);
+					});
+
+
+			$('.back').click(function(){
+
+				$('img[alt="8"]').attr('alt', 9);
+
+
+		  		      $('img[alt="1"]').animate({left: "+=500",}, 1500);
+		  		      $('img[alt="1"]').animate({opacity:"hide"}, 1000, function(){$(this).css('z-index',9)});
+
+		 				$('img[alt="1"]').animate({opacity:"show"}, 1000);
+						$('img[alt="1"]').animate({ left: "-=500"}, 1500);
+
+
+				$('img[alt="1"]').attr('alt', 8);
+
+
+				var obrPict=1;
+				var nomer=1;
+				while(nomer<7)
+				{
+					var obrPict=nomer++;
+					$('img[alt="' + nomer +'"]').attr('alt', obrPict).css('z-index', obrPict);
+				}
+
+				$('img[alt="9"]').attr('alt', 7).css('z-index', 7);		
+
+
+					});
+
+				});
+
+
+
+			</script>
+<style>
+
+.a, .b, .c, .d, .f, .g, .h, .j {position: absolute;}
+
+.a{	
+	padding-right: 20px;
+	z-index: 8;
+}
+.b{
+	top: 50px;
+	left: 30px;
+	z-index: 2;
+}
+.c{
+	top: 80px;
+	left: 50px;
+	z-index: 3;
+}
+.d{
+	top: 110px;
+	left: 70px;
+	z-index: 4;
+}
+.f{
+	top: 150px;
+	left: 90px;
+	z-index: 5;
+}
+.g{
+	top: 180px;
+	left: 110px;
+	z-index: 6;
+}
+.h{
+	top: 220px;
+	left: 130px;
+	z-index: 7;
+}
+.j{
+	top: 260px;
+	left: 150px;
+	z-index: 1;
+}
+
+
+</style>
+</head>
+<body>
+
+<input type='button' value='Следущая' class='next'>
+<input type='button' value='Назад' class='back'>
+
+
+			<img class='j' src=1.jpg width='800' height='371' alt='1'>
+			<img class='h' src=3.jpg width='700' height='371' alt='2'>
+
+
+			<img class='g' src=4.jpg width='800' height='371' alt='3'>
+			<img class='f' src=6.jpg width='850' height='430' alt='4'>
+
+
+
+			<img class='d' src=10.jpg width='860' height='430' alt='5'>
+			<img class='c' src=12.jpg width='800' height='430' alt='6'>
+
+
+			<img class='b' src=18.jpg width='800' height='430' alt='7'>
+			<img class='a' src=21.jpg width='800' height='430' alt='8'> 
+
+
+</body>
+</html>
