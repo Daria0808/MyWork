@@ -1,0 +1,397 @@
+<?php include("../../../blocks/db.php");
+mysql_query('SET NAMES utf8');
+
+include("../../../blocks/lock.php");
+include("../../../blocks/CleanerPole.php");
+  
+if(isset($_GET['id']))
+ {$id=$_GET['id'];}
+
+
+               $Danstranichka=mysql_query("SELECT * FROM admin_test WHERE id='$id' AND nickname='$loginCo'", $db);
+            $Vvodim=mysql_fetch_array($Danstranichka);
+            if($Vvodim=='')
+            {
+              $NoProverka=0;
+            }
+            else
+            {
+                $NoProverka=1;
+            }
+
+?>
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US"><head>
+    <meta charset="utf-8">
+    <title>Редактирование теста</title>
+    <meta name="viewport" content="initial-scale = 1.0, maximum-scale = 1.0, user-scalable = no, width = device-width">
+    <link rel="stylesheet" href="../../../style.css" media="screen">
+    <link rel="stylesheet" href="../../../style.responsive.css" media="all">
+
+
+    <script src="../../../jquery.js"></script>
+    <script src="../../../script.js"></script>
+    <script src="../../../script.responsive.js"></script>
+
+        <script language='javascript' type="text/javascript">
+
+   function getXmlHttpRequest(){
+            if (window.XMLHttpRequest) 
+            {
+                try 
+                {
+                    return new XMLHttpRequest();
+                } 
+                catch (e){}
+            } 
+            else if (window.ActiveXObject) 
+            {
+                try 
+                {
+                    return new ActiveXObject('Msxml2.XMLHTTP');
+                } catch (e){}
+                try 
+                {
+                    return new ActiveXObject('Microsoft.XMLHTTP');
+                } 
+                catch (e){}
+            }
+            return null;
+    }
+
+
+        function toggleActivTest(PolZnachPerecl, NTest, ElemTogg){
+            
+          var dannie=PolZnachPerecl;
+          var NumberTest=NTest;
+
+      var request = getXmlHttpRequest();
+
+      request.onreadystatechange = function (){
+
+      if (request.readyState == 4) {
+      if (request.status == 200)
+      {
+          var otvetServerToggleActivTest=request.responseText;
+          
+          if(otvetServerToggleActivTest=='OK')
+          {
+            ElemTogg.toggleClass('switch-on');
+          }
+          else
+          {
+              alert('Произошла ошибка');
+          }
+      } 
+      else
+      {
+        document.write("Произошла ошибка. Обновите страничку");    
+      } 
+        }
+      }
+
+      var dataObrActivTest = 'MyPerkl='+dannie+'&NumTestAdd='+NumberTest;
+
+      request.open("POST", "obr_pereclActivTest.php", true);  
+        request.setRequestHeader("Content-type",'application/x-www-form-urlencoded', "charset=utf8");
+      request.send(dataObrActivTest); 
+
+        }
+
+
+
+
+        $(document).ready(function() {
+
+        var  mn=0;
+
+            $('#vtors').click(function(){
+                        Perecl='';
+                var znachVal=$(this).prev().val();
+                // alert(znachVal);
+                if(znachVal==1)
+                {
+                    $(this).prev().val('0');
+                }
+                else
+                {
+                    $(this).prev().val('1');
+                }
+
+               var ZnachPerecluchat=$(this).prev().val();
+               var NamOb=$(this).prev().attr('name');
+                var elemToggll= $(this);
+               toggleActivTest(ZnachPerecluchat,NamOb, elemToggll);
+
+
+            });
+
+                   var snpokz=$('#nayk').val();
+                   // alert(snpokz);
+
+                   if(snpokz==1)
+                   {
+                     $('#vtors').toggleClass('switch-on');
+                   }
+                   else
+                   {
+                     $('#vtors').toggleClass('switch-off');
+                   }    
+
+
+            $('#reda').click(function(){
+
+                var pok=$('#CkrPol').val();
+                if(pok==0)
+                {
+                   $('#CkrPol').val('1');
+                    $(this).next().fadeIn(100); 
+                }
+                else
+                {
+                    $(this).next().fadeOut(100);
+                    $('#CkrPol').val('0');
+                    // $('#NNam').val('');
+                    // $('#NKo').val('');
+                }
+
+            });
+
+mn++;
+
+        });
+
+      function changesInfTest()
+      {
+                  var dataChangeInf=$('#skrt').find('input, textarea').serialize();
+          var subDataInf=dataChangeInf+'&IdTestChange='+<?php echo $id; ?>;
+        $.ajax({
+
+          type: "POST",
+          url: "changesInformation.php",
+          data: subDataInf,
+          success:function(otvetServer)
+          {
+            if(otvetServer=='OK')
+            {
+              $('#izmpok').html('*Данные успешно изменены!').fadeIn(0);              
+            }
+            else
+            {
+              $('#izmpok').html('Произошла ошибка').fadeIn(0);              
+            }
+
+          }
+
+        });
+      }
+
+      function changesIndicators()
+      {
+        var dataSubIndecator=$('#IndecatorsData').find('input').serialize();
+        $.ajax({
+
+            type: "POST",
+            url: "obr_changesIndec.php",
+            data: dataSubIndecator,
+            success: function(otvetServerIndecator){
+    // alert(otvetServerIndecator);
+
+                if(otvetServerIndecator=='OK')
+                {
+                    $('#otvetIndecators').html('*изменения успешно внесены!');
+                }
+                else
+                {
+                     $('#otvetIndecators').html('*Ошибка');
+                }
+
+            }
+
+
+        });
+
+      }
+    </script>   
+
+
+<style>
+#SpesMenu
+{
+    position: fixed;
+    height: 280px;
+    width: 40px;
+    bottom:90px;
+    right:15px;
+    background: rgba(100, 120, 250, 0.6);
+}
+
+#skrt{display: none;}
+#izmpok{display: none;}
+
+#skrt{width:400px;}
+.switch-btn {
+    display: inline-block;
+    width: 72px; 
+    height: 38px;
+    border-radius: 19px; 
+    background: #bfbfbf; 
+    z-index: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition-duration: 300ms; 
+}
+.switch-btn::after {
+    content: "";
+    height: 32px;
+    width: 32px; 
+    border-radius: 17px;
+    background: #fff; 
+    top: 3px; 
+    left: 3px; 
+    transition-duration: 300ms;
+    position: absolute;
+    z-index: 1;
+}
+.switch-on {
+    background: #118c4e;
+}
+.switch-on::after {
+    left: 37px;
+}
+</style>
+
+</head>
+<body>
+<div id="art-main">
+    <div class="art-sheet clearfix">
+<header class="art-header">
+
+    <div class="art-shapes">
+        
+            </div>
+
+<h1 class="art-headline">
+    <a href="index.php">Личный кабинет</a>
+</h1>
+
+       
+</header>
+<nav class="art-nav">
+    <ul class="art-hmenu">
+        <li><a href="../../../index.php" class="">Главная</a></li>
+        <li><a href="../../../test.php" class="active">Мои проекты</a>
+            <ul class="active">
+                <li><a href="../../../test/new_test.php" class="">Создать новый тест</a></li>
+ <?php
+           
+            $VvodMenu=mysql_query("SELECT * FROM admin_test WHERE nickname='$loginCo'", $db);
+            $masMenu=mysql_fetch_array($VvodMenu);
+
+        do
+        {
+            echo "
+                <li><a href='../../../test/test_id.php?id=$masMenu[id]' class='active'>$masMenu[nameTest]</a></li>";
+        }
+        while($masMenu=mysql_fetch_array($VvodMenu));
+
+    ?>
+            </ul>
+        </li>
+        <li><a href="../../../testgo.php">Пройти тест</a></li>
+        <li><a href="../../../tuning.php">Настройки</a></li>
+    </ul> 
+    </nav>
+<div class="art-layout-wrapper">
+                <div class="art-content-layout">
+                    <div class="art-content-layout-row">
+                        <div class="art-layout-cell art-content dopl" ><article class="art-post art-article" id='otvPole'>
+                                <h2 class="art-postheader">Редактирование теста</h2>
+                                    
+         <div id='SpesMenu'>
+                <a href='../../../test.php' title='Тесты'><img src=../../../images/test.png width='25' height='25'></a>
+  <?php echo "<a href='../../test_id.php?id=$id' title='Вопросы'><img src=../../../images/wh.png width='25' height='25' ></a>"; ?>
+
+
+    <?php echo "<a href='add_question.php?id=$id' title='Добавить вопрос'><img src=../../../images/add.png width='25' height='25' </a>"; ?>
+    
+    <?php echo " <a href='remove_question.php?id=$id' title='Удалить вопросы'><img src=../../../images/trash_bin_icon.png width='25' height='25'></a><br>"; ?>
+            
+    <?php echo "<a href='edit_test.php?id=$id' title='Редактивароть тест'><img src=../../../images/edit_icon.png width='25' height='25'></a>"; ?>
+    <?php echo " <a href='../../testirivanie.php?id=$id' target='_blank' title='Предворительный просмотр'><img src=../../../images/eye.png width='25' height='25' ></a><br>"; ?>
+               
+
+            </div>
+
+
+
+                <div class="art-postcontent art-postcontent-0 clearfix">
+
+
+        <?php  
+
+            if($NoProverka==1)
+            {
+              $masTest=mysql_query("SELECT * FROM admin_test WHERE id='$id'", $db);
+              $Rez=mysql_fetch_array($masTest);
+
+              echo "<a id='reda'><i>Редактировать название теста</i></a>
+              <div id='skrt'>
+              <input type='hidden' value='0' id='CkrPol'>
+              <p>Название теста: <input type='text' name='NewNTest' value='$Rez[nameTest]' id='NNam'></p>
+              <p>Комментарий: <textarea name='NewKom' id='NKo'>$Rez[comment]</textarea></p>
+                <input type='button' value='Сохранить изменения' onClick='changesInfTest();'>
+              <i id='izmpok'></i>
+              </div>";
+
+
+             
+
+             echo "</div>";     
+
+             echo "<div>";     
+
+
+             $sm=mysql_query("SELECT * FROM admin_test WHERE nickname='$loginCo' AND id='$id'", $db);
+              $masSm=mysql_fetch_array($sm);
+
+
+               echo "Видимый/невидемый тест для прохождения пользователями  <input type='hidden' value='$masSm[activTest]' id='nayk' name='$masSm[id]'><div id='vtors' class='switch-btn'></div>";
+               
+               echo " <div id='IndecatorsData'>Редактировать шкалу выставления оценок. (в %)<br><br>";
+
+               echo "Отлично:<input type='text' value='$masSm[OtlPokazatel]' name='OtlOtvet'><br><br>
+               Хорошо:<input type='text' value='$masSm[WellPokazatel]' name='WellOtvet'><br><br>
+               Удовлетворительно:<input type='text' value='$masSm[YdPokazatel]' name='YdOtvet'><br><br>
+               <input type='hidden' value='$id' name='idTestNext'>
+
+               <input type='button' value='Внести изменения' onClick='changesIndicators();'>
+               </div>";
+
+               echo "<div id='otvetIndecators'></div>";
+
+            }
+            else
+            {
+              echo "Произошла ошибка<br> <a href='../../index.php'>На главную страницу";
+            }
+
+
+                   
+              ?>
+
+
+                </div>
+
+
+</article></div>
+                    </div>
+                </div>
+            </div><footer class="art-footer">
+<p>Д.К. © 2018-2019</p>
+</footer>
+
+</body></html>
