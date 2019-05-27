@@ -1,0 +1,449 @@
+<?php include("../blocks/db.php");
+mysql_query('SET NAMES utf8');
+  include("../blocks/lock.php");
+  include("../blocks/CleanerPole.php");
+
+
+if(isset($_GET['id']))
+ {$id=$_GET['id'];}
+   
+
+        if(isset($_POST['NTest']))
+        {
+
+             $NazTestCome=$_POST['NTest'];
+             $NazTest=cleanerFormComment($NazTestCome);
+            $commentariiCome=$_POST['comment'];
+            $commentarii=cleanerFormComment($commentariiCome);;
+           $dobavit=mysql_query("INSERT INTO admin_test (nameTest, comment, nickname, activTest, OtlPokazatel, WellPokazatel, YdPokazatel ) VALUES ('$NazTest', '$commentarii', '$loginCo','0', '0','0','0')");
+
+           if($dobavit==1)
+           {
+              $SnimaemDan=mysql_query("SELECT id FROM admin_test WHERE nameTest='$NazTest' AND nickname='$loginCo'", $db);
+              $rezZaprosSnimaemDan=mysql_fetch_array($SnimaemDan); 
+              $id=$rezZaprosSnimaemDan['id'];
+           }
+           else
+           {
+            echo "Тест не добавлен... '$NazTest', '$commentarii', '$loginCo";
+           }
+
+           
+        }
+
+            $Danstranichka=mysql_query("SELECT * FROM admin_test WHERE id='$id' AND nickname='$loginCo'", $db);
+            $Vvodim=mysql_fetch_array($Danstranichka);
+            if($Vvodim=='')
+            {
+              $NoProverka=0;
+            }
+            else
+            {
+                $NoProverka=1;
+            }
+
+?>
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US"><head>
+    <meta charset="utf-8">
+    <title><?php echo "Тест: $Vvodim[nameTest]";?></title>
+    <meta name="viewport" content="initial-scale = 1.0, maximum-scale = 1.0, user-scalable = no, width = device-width">
+
+    <link rel="stylesheet" href="../style.css" media="screen">
+    <link rel="stylesheet" href="../style.responsive.css" media="all">
+
+
+    <script src="../jquery.js"></script>
+    <script src="../script.js"></script>
+    <script src="../script.responsive.js"></script>
+ 
+        <script language='javascript' type="text/javascript"> 
+
+    function getXmlHttpRequest(){
+            if (window.XMLHttpRequest) 
+            {
+                try 
+                {
+                    return new XMLHttpRequest();
+                } 
+                catch (e){}
+            } 
+            else if (window.ActiveXObject) 
+            {
+                try 
+                {
+                    return new ActiveXObject('Msxml2.XMLHTTP');
+                } catch (e){}
+                try 
+                {
+                    return new ActiveXObject('Microsoft.XMLHTTP');
+                } 
+                catch (e){}
+            }
+            return null;
+    }
+
+        function DeleVopros(NQuestion){
+
+            var NumberQuestion=NQuestion;
+
+      var request = getXmlHttpRequest();
+
+      request.onreadystatechange = function (){
+
+      if (request.readyState == 4) {
+      if (request.status == 200){
+
+            var otvetServerDelQuest=request.responseText;
+            alert(otvetServerDelQuest);
+            HideDelQuest(NumberQuestion);
+                
+           var CountElemOn=$("img[src$='perguntas_frequentes.png]'").length;
+            if(CountElemOn==0)
+            {
+                $('#svern').fadeOut(0);
+                $('#Razvern').fadeOut(0);
+                $('#Pravka').html('В данном разделе буду представленны Ваши вопросы из теста ');
+                $('#orignlLoading').remove();
+            }
+            
+            } else document.write("Произошла ошибка. Обнови страничку");
+        }
+      }
+      var dataDelQuest ='NumberDeleQuestion='+NumberQuestion;
+
+      request.open("POST", "DeleteQuestionA.php", true);  
+        request.setRequestHeader("Content-type",'application/x-www-form-urlencoded', "charset=utf8");
+        request.send(dataDelQuest); 
+
+
+        }
+
+        function HideDelQuest(NumberQuestionDel)
+        {
+          var NumQuestDel=NumberQuestionDel;
+          $('#HidPole'+NumQuestDel).hide(100);
+        }
+
+        function probn(c)
+        {
+             if(confirm('Удалить вопрос?'))
+             {
+                var startDel= DeleVopros(c);
+             }
+
+        }
+
+        function Perecluchatel(dan)
+        {
+                var t='scrivaem'+dan;            
+                $('#'+t).toggle();
+        };
+
+        $(document).ready(function() {
+
+        $('.prom').click(function(){
+               var proe= $(this).attr('id');
+               Perecluchatel(proe);
+            });
+
+            $('#svern').click(function(){
+                $('.zxc').hide();
+            });
+            $('#Razvern').click(function(){
+                $('.zxc').show();
+            });
+
+            var znach=$('#VoprosYdalen').val();
+            if(znach==1)
+            {
+                alert('Вопрос был успешно удалён');
+            }
+
+
+
+        });
+    </script>   
+<style>
+.art-content .art-postcontent-0 .layout-item-0 { border-spacing: 20px 0px; border-collapse: separate;  }
+.art-content .art-postcontent-0 .layout-item-1 { border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;border-top-color:#C3DFEF;border-right-color:#C3DFEF;border-bottom-color:#C3DFEF;border-left-color:#C3DFEF; color: #123344; background: #FFFFFF;background: rgba(255, 255, 255, 0.5); padding: 3px; vertical-align: top; border-radius: 20px;  }
+.art-content .art-postcontent-0 .layout-item-2 { border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;border-top-color:#C3DFEF;border-right-color:#C3DFEF;border-bottom-color:#C3DFEF;border-left-color:#C3DFEF; color: #102D3C; background: #DBECF5; background: rgba(255, 255, 255, 0.5); padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px; border-radius: 20px;  }
+.art-content .art-postcontent-0 .layout-item-3 { background: ;  }
+.art-content .art-postcontent-0 .layout-item-4 { background: ; padding-right: 10px;padding-left: 10px;  }
+.art-content .art-postcontent-0 .layout-item-5 { color: #0F2A38; background: ; border-spacing: 20px 0px; border-collapse: separate;  }
+.art-content .art-postcontent-0 .layout-item-6 { border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;border-top-color:#C3DFEF;border-right-color:#C3DFEF;border-bottom-color:#C3DFEF;border-left-color:#C3DFEF; color: #113040; background: #EBF4FA;background: rgba(235, 244, 250, 0.5); padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px; border-radius: 20px;  }
+.art-content .art-postcontent-0 .layout-item-7 { border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;border-top-color:#C3DFEF;border-right-color:#C3DFEF;border-bottom-color:#C3DFEF;border-left-color:#C3DFEF; color: #113040; background: #EBF4FA;background: rgba(235, 244, 250, 0.7); padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px; border-radius: 20px;  }
+.art-content .art-postcontent-0 .layout-item-8 { color: #0F2A38; background: ;  border-collapse: separate;  }
+.ie7 .art-post .art-layout-cell {border:none !important; padding:0 !important; }
+.ie6 .art-post .art-layout-cell {border:none !important; padding:0 !important; }
+
+.zxc{display:none;}
+#predvarprosmotr{cursor: pointer;}
+
+#otvPole{width:300px;}
+
+#SpesMenu
+{
+    position: fixed;
+/*    background:#8AC2E0;
+*/
+    height: 280px;
+    width: 40px;
+    bottom:90px;
+    right:15px;
+    background: rgba(100, 120, 250, 0.6);
+}
+.DOtvet{    margin-left: 40px;
+/*background: rgba(235, 244, 250, 0.9);*/}
+
+</style>
+</head>
+<body>
+<div id="art-main">
+    <div class="art-sheet clearfix">
+<header class="art-header">
+
+    <div class="art-shapes">
+        
+            </div>
+
+<h1 class="art-headline">
+    <a href="../index.php" >Личный кабинет</a>
+</h1>
+
+        
+                    
+</header>
+<nav class="art-nav">
+    <ul class="art-hmenu">
+        <li>
+            <a href="../index.php" class="">Главная</a></li>
+            <li><a href="../test.php" class="active">Мои проекты</a>
+                <ul class="active">
+                    <li><a href="../test/new_test.php" class="">Создать новый тест</a></li>
+
+             <?php
+                       
+                        $VvodMenu=mysql_query("SELECT * FROM admin_test WHERE nickname='$loginCo'", $db);
+                        $masMenu=mysql_fetch_array($VvodMenu);
+
+                    do
+                    {
+                        echo "
+                            <li><a href='../test/test_id.php?id=$masMenu[id]' class='active'>$masMenu[nameTest]</a></li>";
+                    }
+                    while($masMenu=mysql_fetch_array($VvodMenu));
+
+                ?>
+
+                </ul>
+            </li>
+            <li><a href="../testgo.php">Пройти тест</a></li>
+            <li><a href="../tuning.php">Настройки</a></li>
+        </ul> 
+    </nav>
+<div class="art-layout-wrapper">
+                <div class="art-content-layout">
+                    <div class="art-content-layout-row">
+                        <div class="art-layout-cell art-content dopl" style="width: 100%;"><article class="art-post art-article">
+                                <h2 class="art-postheader">Тест: "<?php echo "$Vvodim[nameTest]";?>"</h2>
+                                                
+                <div class="art-postcontent art-postcontent-0 clearfix" id='proverc'>
+
+                
+       <div id='SpesMenu'>
+                <a href='../test.php' title='Тесты'><img src=../images/test.png width='25' height='25' ></a>
+              
+     <?php 
+            if($NoProverka!=0)
+            {
+               echo "  <a href='../test/test_id.php?id=$id'  title='Вопросы'><img src='../images/wh.png' width='25' height='25'></a>";      
+            }
+            else
+            {
+               echo "<a href='../test/php' title='Вопросы'><img src='../images/wh.png' width='25' height='25'</a>";      
+
+            }
+    ?>
+
+    <?php 
+            if($NoProverka!=0)
+            {
+               echo "<a href='../test/test_id/question/add_question.php?id=$id' title='Добавить вопрос'><img src=../images/add.png width='25' height='25'</a>";      
+            }
+            else
+            {
+               echo "<a href='../test/php' title='Добавить вопрос'><img src=../images/add.png width='25' height='25'</a>";      
+            }
+    ?>
+             
+    <?php 
+            if($NoProverka!=0)
+            {
+               echo "<a href='../test/test_id/question/remove_question.php?id=$id' title='Удалить вопросы'><img src='../images/trash_bin_icon.png' width='25' height='25'> </a><br>";      
+            }
+            else
+            {
+               echo "<a href='../test/php' title='Удалить вопросы'><img src='../images/trash_bin_icon.png' width='25' height='25'</a>";      
+            }
+    ?>
+
+
+           <?php 
+              if($NoProverka!=0)
+              {
+                 echo " <a href='../test/test_id/question/edit_test.php?id=$id' title='Редактивароть тест'><img src='../images/edit_icon.png' width='25' height='25'> </a>";      
+              }
+              else
+              {
+                 echo "<a href='../test/php' title='Редактивароть'><img src='../images/edit_icon.png' width='25' height='25'</a>";      
+  
+              }
+          ?>
+           <?php 
+              if($NoProverka!=0)
+              {
+                 echo "  <a href='../testirivanie.php?id=$id' title='Предворительный просмотр' target='_blank'><img src='../images/eye.png' width='25' height='25' ></a><br>";      
+              }
+              else
+              {
+                 echo "<a href='../test/php' title='Предворительный просмотр'><img src='../images/eye.png' width='25' height='25'></a>";      
+  
+              }
+          ?>
+            </div>
+
+<div>
+
+                    <p>
+
+            <?php  
+            if($NoProverka!=0)
+            {
+             echo "<p>$Vvodim[comment]</p>"; 
+
+              $masTest=mysql_query("SELECT * FROM question WHERE numberTest='$id'", $db);
+              $Rez=mysql_fetch_array($masTest);
+
+              $SkolkoVoprosov=0;
+              $ball=0;
+              if($Rez!=0)
+              {
+                   do
+                  {
+                      $SkolkoVoprosov++;
+                      if($Rez['flag2']!=0)
+                      {
+                          $ball=$ball+3;
+                      }
+                      else
+                      {
+                        $ball++;
+                      }
+                  }
+                  while($Rez=mysql_fetch_array($masTest));               
+              }
+
+              if($SkolkoVoprosov==1)
+              {
+                  $PadzhVoprosa='вопрос';
+              }
+              else
+              {
+                   if($SkolkoVoprosov<=4)
+                   {
+                      $PadzhVoprosa='вопроса';
+                   }
+                   else
+                   {
+                      $PadzhVoprosa='вопросов';
+                   }                
+              }
+
+              if($SkolkoVoprosov==0)
+              {
+                  echo "В данном разделе буду представленны Ваши вопросы из теста";
+              }
+              else
+              {
+                echo "<p id='orignlLoading'>В тесте $SkolkoVoprosov $PadzhVoprosa.<br> Максимальное колличество баллов, которое можно набрать после прохождения теста: $ball</p>";                
+              
+                echo "                   <div><br><input type='button' value='Свернуть вопросы' id='svern'>
+                      <input type='button' value='Развернуть вопросы' id='Razvern'>
+
+               </div>";
+
+              }
+          }
+          else
+          {
+             echo "Произошла ошибка<br> <a href='../index.php'>На главную страницу";
+          }
+
+
+                          
+
+            ?> </p>
+<div id='Pravka'></div>
+
+            <p>
+    <?php 
+
+ if($NoProverka!=0)
+ {
+        $poex=1;
+        $Vopros=mysql_query("SELECT * FROM question WHERE numberTest='$id'", $db);
+            $chetDlVopr=0;
+
+
+        while($MyVopr=mysql_fetch_array($Vopros))
+            {
+        
+                echo "<div id='HidPole$MyVopr[id]'>$poex) $MyVopr[text]
+
+        <a href='test_id/question/edit_question.php?id=$id&IzVop=$MyVopr[id]' title='Редактивароть вопросы'><img src=../images/edit_icon.png width='25' height='25'></a>
+        <a href='#' title='Удалить вопрос' id='delVopr' onclick='probn($MyVopr[id])'><img src=../images/trash_bin_icon.png width='25' height='25'></a>
+        <a id='predvarprosmotr$poex' title='Посмотреть варианты ответов' class='prom'><img src=../images/perguntas_frequentes.png width='30' height='30' ></a> ";
+            
+
+            $Otvet=mysql_query("SELECT * FROM variant_otv WHERE id_questions='$MyVopr[id]'");
+            $VarOtv=mysql_fetch_array($Otvet);
+
+
+                 echo "<div id='scrivaempredvarprosmotr$poex' class='zxc'>";
+                        do
+                        {
+                            if($VarOtv['prav_ot']==1)
+                            {
+                              echo "<i class='DOtvet'>$VarOtv[variant]</i><img src=../images/gal.png width='30' height='30'><br>";
+                            }
+                            else
+                            {
+                                echo "<i class='DOtvet'>$VarOtv[variant]</i><img src=../images/kr.png width='20' height='20'><br>";
+                            }
+                        }
+                        while($VarOtv=mysql_fetch_array($Otvet));
+                     echo "</div></div>";
+
+                     $poex++;
+
+            }  
+ }
+
+
+    ?></p>
+
+    </div> 
+
+                </div>
+
+
+</article></div>
+                    </div>
+                </div>
+            </div><footer class="art-footer">
+
+<p>Д.К. © 2018-2019</p>
+</footer>
+
+</body></html>
